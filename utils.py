@@ -2,8 +2,9 @@ import os
 import pandas as pd
 from datetime import datetime
 
+
 def tipologia_matte(x):
-    
+
     if x in (250, -250, 500, -500, 250.6, -250.6, 500.6, -500.6):
         return "M"
     elif x == -100:
@@ -12,6 +13,7 @@ def tipologia_matte(x):
         return "C"
     else:
         return "R"
+
 
 def tipologia_andre(x):
     
@@ -22,28 +24,29 @@ def tipologia_andre(x):
     else:
         return "R"
 
-def append_data_to_original_matte(df):
+
+def append_data_to_original_matte(df, test=True):
     
     data_orig = "data/dataMatte.csv"
     now = datetime.utcnow().strftime("%Y%m%d%H%M%S")
     data_store = f"data/storico/dataMatte_{now}.csv"
     
-    data_or = pd.read_csv(data_orig)
+    data_or = pd.read_csv(data_orig, sep=";")
 
     data_f = pd.concat([data_or, df])
     
     assert data_or.shape[0] + df.shape[0] == data_f.shape[0], "Data leakage"
+
+    if not test:
+        os.rename(data_orig, data_store)
+        data_f.to_csv(data_orig, index=False)
     
-    os.rename(data_orig, data_store)
-    
-    data_f.to_csv(data_orig, index=False)
-    
-    print(f"File {data_orig} moved to {data_store}")
+    print(f"\n>>>>>>File {data_orig} moved to {data_store}")
     
     return
 
 
-def process_file_matte():
+def process_file_matte(test=True):
     
     columns = ['Data', 'Operazione', 'Dettagli', 'Conto o carta', 'Contabilizzazione',
        'Categoria ', 'Valuta', 'Importo', 'Spesa Comune']
@@ -59,11 +62,14 @@ def process_file_matte():
     df["Tipologia"] = df["Importo"].apply(tipologia_matte)
     df["Agente"] = "M"
     
-    append_data_to_original_matte(df)
-    
-    os.rename(f"{source}/{filename}", f"{destination}/{filename}")
-    print(f"File {filename} moved from {source} to {destination}")
+    append_data_to_original_matte(df, test)
+
+    if not test:
+        os.rename(f"{source}/{filename}", f"{destination}/{filename}")
+
+    print(f"\n>>>>>>File {filename} moved from {source} to {destination}")
     return
+
 
 def append_data_to_original_andre(df):
     
@@ -84,6 +90,7 @@ def append_data_to_original_andre(df):
     print(f"File {data_orig} moved to {data_store}")
     
     return
+
 
 def process_file_andre():
     
@@ -111,3 +118,7 @@ def process_file_andre():
     
     return
 
+
+if __name__ == "__main__":
+    process_file_matte(test=True)
+    process_file_andre()
