@@ -1,7 +1,7 @@
 #import os
 #import pandas as pd
 
-from utils import process_file_matte
+from main import process_file_matte
 
 
 #source = "data/new_data/matte"
