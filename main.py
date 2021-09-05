@@ -29,7 +29,7 @@ def append_data_to_original_matte(df, test=True):
 
     data_orig = "data/dataMatte.csv"
     now = datetime.utcnow().strftime("%Y%m%d%H%M%S")
-    data_store = f"data/storico/full/dataMatte_{now}.csv"
+    data_store = f"data/storico/full/matte/dataMatte_{now}.csv"
 
     data_or = pd.read_csv(data_orig, sep=";")
     print(f"\n''append_data_to_original_matte'':\t\tloaded {data_orig}")
@@ -41,7 +41,7 @@ def append_data_to_original_matte(df, test=True):
     if not test:
         os.rename(data_orig, data_store)
         print(f"\n''append_data_to_original_matte'':\t\t>>>>>>File {data_orig} moved to {data_store}")
-        data_f.to_csv(data_orig, index=False)
+        data_f.to_csv(data_orig, index=False, sep=";")
         print(f"\n''append_data_to_original_matte'':\t\t>>>>>>NEW data written in new file {data_orig}")
     else:
         print(f"\n''append_data_to_original_matte'':\t\tTEST>>>>>>File {data_orig} moved to {data_store}")
@@ -54,9 +54,9 @@ def append_data_to_original_andre(df, test=True):
 
     data_orig = "data/dataAndre.csv"
     now = datetime.utcnow().strftime("%Y%m%d%H%M%S")
-    data_store = f"data/storico/full/dataAndre_{now}.csv"
+    data_store = f"data/storico/full/andre/dataAndre_{now}.csv"
 
-    data_or = pd.read_csv(data_orig)
+    data_or = pd.read_csv(data_orig, sep=";")
     print(f"\n''append_data_to_original_andre'':\t\tloaded {data_orig}")
 
     data_f = pd.concat([data_or, df])
@@ -66,7 +66,7 @@ def append_data_to_original_andre(df, test=True):
     if not test:
         os.rename(data_orig, data_store)
         print(f"\n''append_data_to_original_andre'':\t\t>>>>>>File {data_orig} moved to {data_store}")
-        data_f.to_csv(data_orig, index=False)
+        data_f.to_csv(data_orig, index=False, sep=";")
         print(f"\n''append_data_to_original_andre'':\t\t>>>>>>NEW data written in new file {data_orig}")
     else:
         print(f"\n''append_data_to_original_andre'':\t\tTEST>>>>>>File {data_orig} moved to {data_store}")
@@ -82,6 +82,7 @@ def process_file_matte(test=True):
 
     source = "data/new_data/matte"
     destination = "data/storico/new/matte"
+    now = datetime.utcnow().strftime("%Y%m%d%H%M%S")
 
     filename = os.listdir(source)[0]
     print(f"\n''process_file_matte'':\t\tfounded {filename} in {source}")
@@ -102,7 +103,7 @@ def process_file_matte(test=True):
     append_data_to_original_matte(df, test)
 
     if not test:
-        os.rename(f"{source}/{filename}", f"{destination}/{filename}")
+        os.rename(f"{source}/{filename}", f"{destination}/{now}_{filename}")
         print(f"\n''process_file_matte'':\t\t>>>>>>file {filename} moved from {source} to {destination}")
     else:
         print(f"\n''process_file_matte'':\t\tTEST>>>>>>file {filename} moved from {source} to {destination}")
@@ -156,3 +157,5 @@ def process_file_andre(test=True):
 if __name__ == "__main__":
     process_file_matte(test=True)
     process_file_andre(test=True)
+    # process_file_matte(test=False)
+    # process_file_andre(test=False)
