@@ -91,6 +91,7 @@ def process_file_matte(apply=True, move_new_files=True,
     df.columns = columns
     df["Tipologia"] = df["Importo"].apply(tipologia_matte)
     df["Agente"] = "M"
+    df["insert_date"] = pd.to_datetime(now)
 
     print("''process_file_matte'':\t\tsomma ricavi: %.2f" % df[df['Tipologia'] == 'R']['Importo'].sum())
     print("''process_file_matte'':\t\tsomma costi: %.2f" % df[df['Tipologia'] == 'C']['Importo'].sum())
@@ -115,7 +116,7 @@ def process_file_andre(apply=True, move_new_files=True,
                        source="data/new_data/andre", backup="data/storico/new/andre"):
 
     columns = ['Data Contabile', 'Data', 'Addebiti', 'Accrediti', 'Dettagli',
-       'Spesa Comune', 'Categoria']
+       'Spesa Comune', 'Categoria ']
 
     try:
         filename = os.listdir(directory + source)[0]
@@ -135,6 +136,8 @@ def process_file_andre(apply=True, move_new_files=True,
     df.drop(columns=["Addebiti", "Accrediti", "Data Contabile"], inplace=True)
     df["Data"] = pd.to_datetime(df["Data"])
     df["Tipologia"] = df["Importo"].apply(tipologia_andre)
+    df["Agente"] = "A"
+    df["insert_date"] = pd.to_datetime(now)
 
     print("''process_file_andre'':\t\tsomma ricavi: %.2f" % df[df['Tipologia'] == 'R']['Importo'].sum())
     print("''process_file_andre'':\t\tsomma costi: %.2f" % df[df['Tipologia'] == 'C']['Importo'].sum())
@@ -156,7 +159,7 @@ def process_file_andre(apply=True, move_new_files=True,
 
 
 def merge_files(apply=True, source_andre="dataAndre.csv",
-                source_matte="dataAndre.csv", source_data="data/", file_merge="data.csv",
+                source_matte="dataMatte.csv", source_data="data/", file_merge="data.csv",
                 backup_data="storico/full/merged/"):
 
     path_andre = directory + source_data + source_andre
