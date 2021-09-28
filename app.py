@@ -2,27 +2,10 @@ from flask import Flask, redirect, url_for, request, render_template
 
 app = Flask(__name__)
 
-# print(__name__)
-
 
 @app.route("/")
 def index():
-    return render_template("hello.html")
-# def index():
-#     str="""
-# <html lang="en">
-# <head>
-#     <meta charset="UTF-8">
-#     <title>Hello world</title>
-# </head>
-# <body>
-#     <h1>Hello world</h1>
-# </body>
-# </html>
-# """
-#     return str
-# def hello_world():
-#     return "Hello!"
+    return render_template("index.html")
 
 
 @app.route("/sayhello")
@@ -48,6 +31,13 @@ def login():
     elif request.method == "GET":
         user = request.args.get("Name")
         return redirect(url_for("hello_name", name=user))
+
+
+@app.route("/result", methods=["POST", "GET"])
+def result():
+    if request.method == "POST":
+        result = request.form
+        return render_template("result.html", result=result)
 
 
 if __name__ == "__main__":
