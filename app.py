@@ -1,5 +1,5 @@
 from flask import Flask, redirect, url_for, request, render_template,\
-    make_response, session, abort
+    make_response, session, abort, flash
 
 app = Flask(__name__)
 app.secret_key = "random string"
@@ -27,16 +27,22 @@ def hello_guest(name):
 @app.route("/login", methods=["POST", "GET"])
 def login():
     if request.method == "POST":
-        if request.form["Name"] == "neo":
+        if request.form["Name"] != "neo":
+            # or request.form["password"] != "morpheus":
+            # error = "Invalid username or password. Please try again!"
+            abort(401)
+        else:
+            # flash("You were successfully logged in")
+            # flash("log out before login again")
             user = request.form["Name"]
             return redirect(url_for("hello_name", name=user))
-        else:
-            abort(401)
+            # return redirect(url_for("index"))
     elif request.method == "GET":
         user = request.args.get("Name")
         return redirect(url_for("hello_name", name=user))
     else:
         return "Failed"
+    # return render_template("log_in.html", error=error)
 
 
 @app.route("/result", methods=["POST", "GET"])
@@ -84,6 +90,19 @@ def session_login():
 def logout():
     session.pop("username", None)
     return redirect(url_for("session_func"))
+
+
+@app.route("/login2", methods=["POST", "GET"])
+def login2():
+    error = None
+    if request.method == "POST":
+        if request.form["username"] != "neo" or request.form["password"] != "morpheus":
+            error = "Invalid username or password. Please try again!"
+        else:
+            flash("You were successfully logged in")
+            flash("log out before login again")
+            return redirect(url_for("index"))
+    return render_template("log_in.html", error=error)
 
 
 if __name__ == "__main__":
