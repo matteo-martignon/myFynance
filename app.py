@@ -1,5 +1,6 @@
 from flask import Flask, redirect, url_for, request, render_template,\
     make_response, session, abort, flash
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = "random string"
@@ -103,6 +104,18 @@ def login2():
             flash("log out before login again")
             return redirect(url_for("index"))
     return render_template("log_in.html", error=error)
+
+
+@app.route("/upload")
+def upload():
+    return render_template("upload.html")
+
+@app.route("/uploader", methods=["POST", "GET"])
+def uploader():
+    if request.method == "POST":
+        f = request.files["file"]
+        f.save(secure_filename(f.filename))
+        return f"File {f.filename} uploaded successfully"
 
 
 if __name__ == "__main__":
